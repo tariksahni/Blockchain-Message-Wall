@@ -5,16 +5,26 @@ import "hardhat/console.sol";
 
 contract MessageWall {
     uint256 messageCount;
-    constructor() {
-        console.log("Hey, Smart Contract. How you doing ?");
+    event NewMessage(string message, address indexed from, uint256 timestamp);
+    struct Message{
+        string message; // The message
+        address sender; // The address of the sender who sent the message.
+        uint256 timestamp; // The timestamp
     }
-    function incrementMessageCount() public {
+    Message[] messages;
+
+    constructor() {}
+    function setMessage(string memory _message) public {
         messageCount += 1;
-        console.log("%s pinged you!", msg.sender);
+        messages.push(Message(_message, msg.sender, block.timestamp));
+        emit NewMessage(_message, msg.sender, block.timestamp);
     }
 
     function getTotalMessageCount() public view returns (uint256) {
-        console.log("We have %d total messages!", messageCount);
         return messageCount;
+    }
+
+    function getMessages() public view returns (Message[] memory) {
+        return messages;
     }
 }

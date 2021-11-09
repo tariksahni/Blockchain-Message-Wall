@@ -9,12 +9,13 @@ const main = async () => {
 	let messageCount;
 	messageCount = await messageWallContract.getTotalMessageCount();
 
-	let messageTxn = await messageWallContract.incrementMessageCount();
+	let messageTxn = await messageWallContract.setMessage('Test Message');
 	await messageTxn.wait();
 	messageCount = await messageWallContract.getTotalMessageCount();
-	messageTxn = await messageWallContract.connect(randomPerson).incrementMessageCount();
+	messageTxn = await messageWallContract.connect(randomPerson).setMessage('Another Test Message');
 	await messageTxn.wait();
 	messageCount = await messageWallContract.getTotalMessageCount();
+	const messages = await messageWallContract.getMessages();
 };
 
 const runMain = async () => {
