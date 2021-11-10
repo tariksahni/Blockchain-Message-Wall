@@ -14,11 +14,19 @@ const main = async () => {
 	);
 	console.log("contract balance",  hre.ethers.utils.formatEther(contractBalance));
 
-	let messageTxn = await messageWallContract.setMessage('Test Message');
-	await messageTxn.wait();
+	const messageTx1 = await messageWallContract.setMessage('Test Message #1');
+	await messageTx1.wait();
 	contractBalance = await hre.ethers.provider.getBalance(messageWallContract.address);
 	console.log(
-		'Contract balance after transaction:',
+		'Contract balance after transaction 1:',
+		hre.ethers.utils.formatEther(contractBalance)
+	);
+
+	const messageTxn2 = await messageWallContract.setMessage('Test Message #2');
+	await messageTxn2.wait();
+	contractBalance = await hre.ethers.provider.getBalance(messageWallContract.address);
+	console.log(
+		'Contract balance after transaction 2:',
 		hre.ethers.utils.formatEther(contractBalance)
 	);
 	const messages = await messageWallContract.getMessages();
