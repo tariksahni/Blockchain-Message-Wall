@@ -2,19 +2,25 @@ const main = async () => {
 	const signers = await hre.ethers.getSigners();
 	const [owner, randomPerson] = signers;
 	const contractFactory = await hre.ethers.getContractFactory('MessageWall');
-	const messageWallContract = await contractFactory.deploy();
+	const messageWallContract = await contractFactory.deploy({
+		value: hre.ethers.utils.parseEther('0.1'),
+	});
 	await messageWallContract.deployed();
-	console.log("Contract deployed to:", messageWallContract.address);
-	console.log("Contract deployed by:", owner.address);
-	let messageCount;
-	messageCount = await messageWallContract.getTotalMessageCount();
+	console.log("Contract deployed to:", messageWallContract.address, owner.address);
+
+
+	let contractBalance = await hre.ethers.provider.getBalance(
+		messageWallContract.address
+	);
+	console.log("contract balance",  hre.ethers.utils.formatEther(contractBalance));
 
 	let messageTxn = await messageWallContract.setMessage('Test Message');
 	await messageTxn.wait();
-	messageCount = await messageWallContract.getTotalMessageCount();
-	messageTxn = await messageWallContract.connect(randomPerson).setMessage('Another Test Message');
-	await messageTxn.wait();
-	messageCount = await messageWallContract.getTotalMessageCount();
+	contractBalance = await hre.ethers.provider.getBalance(messageWallContract.address);
+	console.log(
+		'Contract balance after transaction:',
+		hre.ethers.utils.formatEther(contractBalance)
+	);
 	const messages = await messageWallContract.getMessages();
 };
 

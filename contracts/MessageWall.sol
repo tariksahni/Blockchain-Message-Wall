@@ -13,11 +13,18 @@ contract MessageWall {
     }
     Message[] messages;
 
-    constructor() {}
+    constructor() payable {}
     function setMessage(string memory _message) public {
         messageCount += 1;
         messages.push(Message(_message, msg.sender, block.timestamp));
         emit NewMessage(_message, msg.sender, block.timestamp);
+        uint256 prizeAmount = 0.0001 ether;
+        require(
+            prizeAmount <= address(this).balance,
+            "Trying to withdraw more money than the contract has."
+        );
+        (bool success, ) = (msg.sender).call{value: prizeAmount}("");
+        require(success, "Failed to withdraw money from contract.");
     }
 
     function getTotalMessageCount() public view returns (uint256) {
